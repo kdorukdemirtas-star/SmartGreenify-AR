@@ -2,7 +2,9 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>SmartGreenify - IoT Sensör Ağı ve ML Tabanlı Akıllı Sera Sistemi</title>
     <style>
         * {
@@ -16,6 +18,10 @@
             background: linear-gradient(135deg, #EAE8DD, #f5f3eb, #ffffff);
             overflow: hidden;
             height: 100vh;
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         #container {
@@ -302,6 +308,129 @@
             50% { opacity: 1; }
             100% { opacity: 0; transform: translateY(100px); }
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5em;
+            }
+
+            #logo-overlay {
+                font-size: 1.8em;
+                top: 15px;
+            }
+
+            .subtitle {
+                font-size: 1em;
+                padding: 0 15px;
+            }
+
+            .project-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stat-box {
+                padding: 15px 20px;
+            }
+
+            .stat-value {
+                font-size: 2em;
+            }
+
+            .instructions {
+                padding: 20px;
+            }
+
+            .instruction-item {
+                font-size: 0.95em;
+            }
+
+            .instruction-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1em;
+            }
+
+            #start-btn {
+                padding: 15px 40px;
+                font-size: 1.1em;
+            }
+
+            #controls {
+                bottom: 15px;
+                padding: 15px 20px;
+                gap: 10px;
+                flex-wrap: wrap;
+                max-width: 90%;
+            }
+
+            .control-btn {
+                padding: 10px 18px;
+                font-size: 0.85em;
+            }
+
+            #component-info {
+                max-width: 90%;
+                padding: 25px;
+                max-height: 70vh;
+            }
+
+            .component-title {
+                font-size: 1.5em;
+            }
+
+            .component-desc {
+                font-size: 0.95em;
+            }
+
+            .spec-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 8px 0;
+            }
+
+            .spec-item span {
+                margin-left: 0 !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2em;
+            }
+
+            #logo-overlay {
+                font-size: 1.5em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .stat-value {
+                font-size: 1.8em;
+            }
+
+            #start-btn {
+                padding: 12px 30px;
+                font-size: 1em;
+            }
+
+            #controls {
+                bottom: 10px;
+                padding: 10px 15px;
+            }
+
+            .control-btn {
+                padding: 8px 15px;
+                font-size: 0.75em;
+            }
+
+            .component-title {
+                font-size: 1.3em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -520,7 +649,13 @@
             scene.fog = new THREE.Fog(0xEAE8DD, 10, 25);
 
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(8, 6, 8);
+            
+            // Adjust camera for mobile
+            if (window.innerWidth <= 768) {
+                camera.position.set(10, 7, 10);
+            } else {
+                camera.position.set(8, 6, 8);
+            }
             camera.lookAt(0, 1.5, 0);
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -967,20 +1102,46 @@
 
         function setupControls() {
             let targetRotY = 0;
+            let touchStartX = 0;
+            let isTouching = false;
 
+            // Mouse control
             document.addEventListener('mousemove', e => {
-                if (isRotating) {
+                if (isRotating && !isTouching) {
                     targetRotY = ((e.clientX / window.innerWidth) * 2 - 1) * 0.5;
                     window.targetRotY = targetRotY;
                 }
             });
 
+            // Touch controls for mobile
+            renderer.domElement.addEventListener('touchstart', e => {
+                isTouching = true;
+                touchStartX = e.touches[0].clientX;
+                e.preventDefault();
+            }, { passive: false });
+
+            renderer.domElement.addEventListener('touchmove', e => {
+                if (isRotating && isTouching) {
+                    const touchX = e.touches[0].clientX;
+                    const deltaX = touchX - touchStartX;
+                    targetRotY = (deltaX / window.innerWidth) * 2;
+                    window.targetRotY = targetRotY;
+                    touchStartX = touchX;
+                }
+                e.preventDefault();
+            }, { passive: false });
+
+            renderer.domElement.addEventListener('touchend', e => {
+                isTouching = false;
+            });
+
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2();
 
-            renderer.domElement.addEventListener('click', e => {
-                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            // Click handler
+            function handleClick(clientX, clientY) {
+                mouse.x = (clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(clientY / window.innerHeight) * 2 + 1;
                 raycaster.setFromCamera(mouse, camera);
                 const hits = raycaster.intersectObjects(scene.children, true);
                 if (hits.length) {
@@ -988,6 +1149,25 @@
                     while (obj && !obj.userData.componentId) obj = obj.parent;
                     if (obj?.userData.componentId) showComponentInfo(obj.userData.componentId);
                 }
+            }
+
+            renderer.domElement.addEventListener('click', e => {
+                handleClick(e.clientX, e.clientY);
+            });
+
+            // Touch tap handler
+            let tapTimeout;
+            renderer.domElement.addEventListener('touchstart', e => {
+                if (e.touches.length === 1) {
+                    clearTimeout(tapTimeout);
+                    tapTimeout = setTimeout(() => {
+                        handleClick(e.touches[0].clientX, e.touches[0].clientY);
+                    }, 200);
+                }
+            });
+
+            renderer.domElement.addEventListener('touchmove', e => {
+                clearTimeout(tapTimeout);
             });
         }
 
@@ -1020,6 +1200,14 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Adjust camera distance for mobile
+            if (window.innerWidth <= 768) {
+                camera.position.set(10, 7, 10);
+            } else {
+                camera.position.set(8, 6, 8);
+            }
+            camera.lookAt(0, 1.5, 0);
         }
 
         document.getElementById('start-btn').addEventListener('click', () => {
@@ -1031,12 +1219,22 @@
                 document.querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 const v = btn.dataset.view;
+                const isMobile = window.innerWidth <= 768;
+                
                 if (v === 'default') {
-                    camera.position.set(8, 6, 8);
+                    if (isMobile) {
+                        camera.position.set(10, 7, 10);
+                    } else {
+                        camera.position.set(8, 6, 8);
+                    }
                     camera.lookAt(0, 1.5, 0);
                 }
                 else if (v === 'top') {
-                    camera.position.set(0, 12, 0);
+                    if (isMobile) {
+                        camera.position.set(0, 14, 0);
+                    } else {
+                        camera.position.set(0, 12, 0);
+                    }
                     camera.lookAt(0, 0, 0);
                 }
                 else if (v === 'inside') {
