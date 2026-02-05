@@ -398,31 +398,193 @@
                 greenhouse.add(post);
             });
 
-            // Walls
+            // Walls - more visible transparent polycarbonate
             const wallMat = new THREE.MeshPhysicalMaterial({
-                color: 0xe8f4f8, transparent: true, opacity: 0.4, clearcoat: 0.6
+                color: 0xd4e8f0,
+                transparent: true,
+                opacity: 0.5,
+                roughness: 0.1,
+                metalness: 0.05,
+                clearcoat: 0.7,
+                clearcoatRoughness: 0.1,
+                side: THREE.DoubleSide
             });
             
             const wall1 = new THREE.Mesh(new THREE.PlaneGeometry(4.92, 2.85), wallMat);
             wall1.position.set(0, 1.575, -2.5);
+            wall1.castShadow = true;
+            wall1.receiveShadow = true;
             greenhouse.add(wall1);
 
             const wall2 = wall1.clone();
             wall2.position.z = 2.5;
             wall2.rotation.y = Math.PI;
+            wall2.castShadow = true;
+            wall2.receiveShadow = true;
             greenhouse.add(wall2);
 
-            [[-2.5, 0], [2.5, Math.PI/2]].forEach(([x, r]) => {
+            [[-2.5, Math.PI/2], [2.5, -Math.PI/2]].forEach(([x, r]) => {
                 const w = new THREE.Mesh(new THREE.PlaneGeometry(4.92, 2.85), wallMat);
                 w.position.set(x, 1.575, 0);
                 w.rotation.y = r;
+                w.castShadow = true;
+                w.receiveShadow = true;
                 greenhouse.add(w);
             });
 
-            // Roof
-            const roof = new THREE.Mesh(new THREE.BoxGeometry(5, 0.05, 5), wallMat);
+            // Add vertical ribs to show polycarbonate sheet structure
+            const ribMat = new THREE.LineBasicMaterial({ 
+                color: 0xb8c9d4, 
+                linewidth: 2,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            // Vertical ribs on all walls
+            for (let i = -2.3; i <= 2.3; i += 0.15) {
+                // Front wall ribs
+                const ribPoints1 = [
+                    new THREE.Vector3(i, 0.15, -2.5),
+                    new THREE.Vector3(i, 3, -2.5)
+                ];
+                const ribGeom1 = new THREE.BufferGeometry().setFromPoints(ribPoints1);
+                greenhouse.add(new THREE.Line(ribGeom1, ribMat));
+                
+                // Back wall ribs
+                const ribPoints2 = [
+                    new THREE.Vector3(i, 0.15, 2.5),
+                    new THREE.Vector3(i, 3, 2.5)
+                ];
+                const ribGeom2 = new THREE.BufferGeometry().setFromPoints(ribPoints2);
+                greenhouse.add(new THREE.Line(ribGeom2, ribMat));
+                
+                // Left wall ribs
+                const ribPoints3 = [
+                    new THREE.Vector3(-2.5, 0.15, i),
+                    new THREE.Vector3(-2.5, 3, i)
+                ];
+                const ribGeom3 = new THREE.BufferGeometry().setFromPoints(ribPoints3);
+                greenhouse.add(new THREE.Line(ribGeom3, ribMat));
+                
+                // Right wall ribs
+                const ribPoints4 = [
+                    new THREE.Vector3(2.5, 0.15, i),
+                    new THREE.Vector3(2.5, 3, i)
+                ];
+                const ribGeom4 = new THREE.BufferGeometry().setFromPoints(ribPoints4);
+                greenhouse.add(new THREE.Line(ribGeom4, ribMat));
+            }
+
+            // Roof - transparent polycarbonate with ribs
+            const roofMat = new THREE.MeshPhysicalMaterial({
+                color: 0xd4e8f0,
+                transparent: true,
+                opacity: 0.5,
+                roughness: 0.1,
+                metalness: 0.05,
+                clearcoat: 0.7,
+                side: THREE.DoubleSide
+            });
+            const roof = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), roofMat);
             roof.position.y = 3;
+            roof.rotation.x = -Math.PI / 2;
+            roof.receiveShadow = true;
             greenhouse.add(roof);
+
+            // Roof ribs
+            for (let i = -2.4; i <= 2.4; i += 0.15) {
+                const roofRibPoints1 = [
+                    new THREE.Vector3(i, 3, -2.5),
+                    new THREE.Vector3(i, 3, 2.5)
+                ];
+                const roofRibGeom1 = new THREE.BufferGeometry().setFromPoints(roofRibPoints1);
+                greenhouse.add(new THREE.Line(roofRibGeom1, ribMat));
+            }
+
+            // Transparent plastic container (like in photo)
+            const containerMat = new THREE.MeshPhysicalMaterial({
+                color: 0xadd8e6,
+                transparent: true,
+                opacity: 0.25,
+                roughness: 0.2,
+                metalness: 0.1,
+                clearcoat: 0.3,
+                side: THREE.DoubleSide
+            });
+            
+            // Container walls
+            const containerHeight = 0.35;
+            const containerSize = 4.4;
+            
+            // Bottom
+            const bottom = new THREE.Mesh(
+                new THREE.PlaneGeometry(containerSize, containerSize),
+                containerMat
+            );
+            bottom.rotation.x = -Math.PI / 2;
+            bottom.position.y = 0.175;
+            greenhouse.add(bottom);
+            
+            // Front wall
+            const cFront = new THREE.Mesh(
+                new THREE.PlaneGeometry(containerSize, containerHeight),
+                containerMat
+            );
+            cFront.position.set(0, 0.35, containerSize/2);
+            greenhouse.add(cFront);
+            
+            // Back wall
+            const cBack = new THREE.Mesh(
+                new THREE.PlaneGeometry(containerSize, containerHeight),
+                containerMat
+            );
+            cBack.position.set(0, 0.35, -containerSize/2);
+            cBack.rotation.y = Math.PI;
+            greenhouse.add(cBack);
+            
+            // Left wall
+            const cLeft = new THREE.Mesh(
+                new THREE.PlaneGeometry(containerSize, containerHeight),
+                containerMat
+            );
+            cLeft.position.set(-containerSize/2, 0.35, 0);
+            cLeft.rotation.y = Math.PI / 2;
+            greenhouse.add(cLeft);
+            
+            // Right wall
+            const cRight = new THREE.Mesh(
+                new THREE.PlaneGeometry(containerSize, containerHeight),
+                containerMat
+            );
+            cRight.position.set(containerSize/2, 0.35, 0);
+            cRight.rotation.y = -Math.PI / 2;
+            greenhouse.add(cRight);
+
+            // Container edges for better visibility
+            const edgeMat = new THREE.LineBasicMaterial({ color: 0x88b8cc, linewidth: 2 });
+            const containerEdges = [
+                // Bottom edges
+                [[-2.2, 0.175, -2.2], [2.2, 0.175, -2.2]],
+                [[2.2, 0.175, -2.2], [2.2, 0.175, 2.2]],
+                [[2.2, 0.175, 2.2], [-2.2, 0.175, 2.2]],
+                [[-2.2, 0.175, 2.2], [-2.2, 0.175, -2.2]],
+                // Top edges
+                [[-2.2, 0.525, -2.2], [2.2, 0.525, -2.2]],
+                [[2.2, 0.525, -2.2], [2.2, 0.525, 2.2]],
+                [[2.2, 0.525, 2.2], [-2.2, 0.525, 2.2]],
+                [[-2.2, 0.525, 2.2], [-2.2, 0.525, -2.2]],
+                // Vertical edges
+                [[-2.2, 0.175, -2.2], [-2.2, 0.525, -2.2]],
+                [[2.2, 0.175, -2.2], [2.2, 0.525, -2.2]],
+                [[2.2, 0.175, 2.2], [2.2, 0.525, 2.2]],
+                [[-2.2, 0.175, 2.2], [-2.2, 0.525, 2.2]]
+            ];
+            
+            containerEdges.forEach(([start, end]) => {
+                const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
+                const lineGeom = new THREE.BufferGeometry().setFromPoints(points);
+                greenhouse.add(new THREE.Line(lineGeom, edgeMat));
+            });
 
             // Soil
             const soil = new THREE.Mesh(
