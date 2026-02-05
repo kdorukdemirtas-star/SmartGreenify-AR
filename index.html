@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartGreenify AR Hologram</title>
+    <title>SmartGreenify - IoT Sensör Ağı ve ML Tabanlı Akıllı Sera Sistemi</title>
     <style>
         * {
             margin: 0;
@@ -48,13 +48,13 @@
         }
 
         .logo {
-            font-size: 3.5em;
+            font-size: 4em;
             font-weight: bold;
             background: linear-gradient(135deg, #16a34a, #22c55e, #4ade80);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             animation: pulse 2s infinite;
         }
 
@@ -64,13 +64,39 @@
         }
 
         .subtitle {
-            font-size: 1.2em;
+            font-size: 1.4em;
             color: #4a5568;
             margin-bottom: 40px;
             text-align: center;
-            max-width: 700px;
+            max-width: 800px;
             padding: 0 20px;
-            line-height: 1.5;
+            line-height: 1.6;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-box {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            padding: 20px 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #22c55e;
+        }
+
+        .stat-label {
+            color: #4a5568;
+            margin-top: 5px;
+            font-size: 0.9em;
         }
 
         .instructions {
@@ -120,7 +146,7 @@
 
         #start-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(34, 197, 94, 0.4);
+            box-shadow: 0 15px 40px rgba(34, 197, 94, 0.5);
         }
 
         #canvas-container {
@@ -180,11 +206,13 @@
             padding: 35px;
             border-radius: 25px;
             color: #2d3748;
-            max-width: 550px;
+            max-width: 650px;
             border: 3px solid #22c55e;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             display: none;
             z-index: 1001;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         #logo-overlay {
@@ -192,7 +220,7 @@
             top: 30px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 2em;
+            font-size: 2.5em;
             font-weight: bold;
             background: linear-gradient(135deg, #16a34a, #22c55e, #4ade80);
             -webkit-background-clip: text;
@@ -213,165 +241,314 @@
         }
 
         .component-title {
-            font-size: 1.9em;
-            color: #16a34a;
+            font-size: 2em;
+            color: #22c55e;
             margin-bottom: 15px;
             font-weight: bold;
         }
 
         .component-desc {
             color: #4a5568;
-            line-height: 1.7;
+            line-height: 1.6;
             margin-bottom: 20px;
             font-size: 1.05em;
         }
 
-        .component-specs {
-            background: rgba(255, 255, 255, 0.6);
+        .specs-container {
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 12px;
             margin-top: 15px;
         }
 
         .spec-item {
             display: flex;
             justify-content: space-between;
-            margin: 10px 0;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
         }
 
         .close-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: #4a5568;
-            font-size: 2em;
+            top: 15px;
+            right: 15px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
+            transition: all 0.3s ease;
         }
 
         .close-btn:hover {
-            color: #16a34a;
-            background: rgba(34, 197, 94, 0.1);
-            transform: rotate(90deg);
+            background: #ef4444;
+        }
+
+        .data-flow {
+            position: absolute;
+            width: 3px;
+            height: 20px;
+            background: linear-gradient(to bottom, #22c55e, transparent);
+            animation: dataFlow 2s infinite;
+        }
+
+        @keyframes dataFlow {
+            0% { opacity: 0; transform: translateY(0); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(100px); }
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <div id="welcome-screen">
-            <div class="logo">🌱 SMARTGREENIFY</div>
-            <div class="subtitle">IoT Sensör Ağı ve Makine Öğrenmesi Tabanlı<br>Akıllı Sera Sistemi</div>
-            
-            <div class="instructions">
-                <div class="instruction-item">
-                    <div class="instruction-icon">📱</div>
-                    <span>Cihazınızı düz bir yüzey üzerine tutun</span>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-icon">🔄</div>
-                    <span>360° döndürerek inceleyin</span>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-icon">👆</div>
-                    <span>Bileşenlere tıklayarak detayları keşfedin</span>
-                </div>
-                <div class="instruction-item">
-                    <div class="instruction-icon">🎯</div>
-                    <span>Gerçek zamanlı sensör verilerini görüntüleyin</span>
-                </div>
+    <div id="welcome-screen">
+        <div class="logo">SmartGreenify</div>
+        <div class="subtitle">IoT Sensör Ağı ve ML Tabanlı Akıllı Sera Sistemi<br>Raspberry Pi 5 & Scikit-learn Destekli</div>
+        
+        <div class="project-stats">
+            <div class="stat-box">
+                <div class="stat-value">%40</div>
+                <div class="stat-label">Su Tasarrufu</div>
             </div>
-
-            <button id="start-btn">Deneyimi Başlat</button>
+            <div class="stat-box">
+                <div class="stat-value">%99.8</div>
+                <div class="stat-label">Sistem Başarısı</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">%84.7</div>
+                <div class="stat-label">ML Doğruluğu</div>
+            </div>
         </div>
 
+        <div class="instructions">
+            <div class="instruction-item">
+                <div class="instruction-icon">🖱️</div>
+                <div>Fareyi hareket ettirerek sera modelini döndürebilirsiniz</div>
+            </div>
+            <div class="instruction-item">
+                <div class="instruction-icon">👆</div>
+                <div>Bileşenlere tıklayarak detaylı bilgi alabilirsiniz</div>
+            </div>
+            <div class="instruction-item">
+                <div class="instruction-icon">🎮</div>
+                <div>Alttaki butonlarla farklı görünümlere geçiş yapabilirsiniz</div>
+            </div>
+        </div>
+
+        <button id="start-btn">3D Modeli Başlat</button>
+    </div>
+
+    <div id="container">
+        <div id="logo-overlay">SmartGreenify</div>
+        
         <div id="canvas-container"></div>
 
-        <div id="logo-overlay">🌱 SMARTGREENIFY</div>
-
         <div id="controls">
-            <button class="control-btn active" data-view="default">🏠 Genel</button>
-            <button class="control-btn" data-view="top">🔝 Üst</button>
-            <button class="control-btn" data-view="inside">📍 İç</button>
-            <button class="control-btn" data-view="system">⚙️ Sistem</button>
+            <button class="control-btn active" data-view="default">🏠 Ana Görünüm</button>
+            <button class="control-btn" data-view="top">🔝 Üstten Görünüm</button>
+            <button class="control-btn" data-view="inside">📸 İç Görünüm</button>
+            <button class="control-btn" data-view="system">🤖 Sistem Detayları</button>
+            <button class="control-btn" data-view="architecture">🏗️ Mimari</button>
         </div>
 
         <div id="component-info">
-            <button class="close-btn" onclick="closeComponentInfo()">×</button>
-            <div class="component-title" id="comp-title">Bileşen</div>
-            <div class="component-desc" id="comp-desc">Açıklama</div>
-            <div class="component-specs" id="comp-specs"></div>
+            <button class="close-btn" onclick="closeComponentInfo()">✕ Kapat</button>
+            <div class="component-title" id="comp-title"></div>
+            <div class="component-desc" id="comp-desc"></div>
+            <div class="specs-container">
+                <div id="comp-specs"></div>
+            </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        let scene, camera, renderer, greenhouse;
-        let isRotating = true;
+        let scene, camera, renderer, greenhouse, isRotating = true;
+        window.targetRotY = 0;
 
         const componentData = {
             'raspberry-pi': {
-                title: 'Raspberry Pi 5 4GB',
-                desc: 'Sistemin beyni. Broadcom BCM2712 ile ML modellerini yerel çalıştırır.',
-                specs: { 'İşlemci': 'BCM2712', 'RAM': '4GB', 'CPU': '%12-18', 'Kullanım': '420 MB' }
+                title: '🖥️ Raspberry Pi 5 (4GB) - Ana İşlemci',
+                desc: 'Sistemin beyni olan Raspberry Pi 5, tüm sensör verilerini işler, makine öğrenmesi modelini yerel olarak çalıştırır ve akıllı sulama kararları verir. Arduino/ESP32\'den 10 kat daha güçlü!',
+                specs: {
+                    'İşlemci': 'Broadcom BCM2712 Quad-core 1.5 GHz',
+                    'RAM': '4GB LPDDR4X',
+                    'ML Kütüphanesi': 'Scikit-learn 1.3+',
+                    'İşletim Sistemi': 'Raspberry Pi OS (Linux)',
+                    'Özellik': 'Yerel ML - İnternet Gerektirmez',
+                    'Güncelleme': 'Her 7 günde otomatik model güncelleme',
+                    'Tepki Süresi': '< 100ms (Gerçek zamanlı)'
+                }
             },
-            'plants': {
-                title: 'Roka (Eruca sativa)',
-                desc: '6 adet roka 15 günde sağlıklı büyüdü. %100 organik, pestisitsiz.',
-                specs: { 'Sayı': '6 adet', 'Büyüme': '1.5→4cm', 'Sağlık': '%100', 'Organik': 'Evet' }
+            'bme280': {
+                title: '🌡️ BME280 - Çevre Sensörü (SPI)',
+                desc: 'Seradaki sıcaklık, hava nemi ve basıncı ölçen hassas sensör. 10 MHz SPI protokolü ile yüksek hızda veri iletimi sağlar.',
+                specs: {
+                    'Ölçümler': 'Sıcaklık, Nem, Basınç',
+                    'Protokol': 'SPI (10 MHz)',
+                    'Sıcaklık Hassasiyeti': '±0.5°C',
+                    'Nem Hassasiyeti': '±3%',
+                    'Basınç Hassasiyeti': '±1 hPa',
+                    'Okuma Sıklığı': '1 saniye',
+                    'Test Sonuçları': '4,320 başarılı kayıt (15 gün)'
+                }
+            },
+            'soil-sensor': {
+                title: '💧 Kapasitif Toprak Nem Sensörü',
+                desc: 'Toprağın nem seviyesini kapasitif frekans değişimi ile ölçer. Korozyona dayanıklı yapısı ile uzun ömürlüdür. ML modelinin ana girdisidir.',
+                specs: {
+                    'Ölçüm Prensibi': 'Kapasitif frekans değişimi',
+                    'Çıkış': '0-3.3V analog sinyal',
+                    'ADC': 'ADS1115 (16-bit)',
+                    'Min Nem (Test)': '42.3%',
+                    'Maks Nem (Test)': '68.7%',
+                    'Ortalama Nem': '55.4%',
+                    'İdeal Aralık': '45-65%'
+                }
+            },
+            'ldr': {
+                title: '☀️ LDR - Işık Sensörü',
+                desc: 'Gündüz ve gece tespiti yaparak sulama zamanlamasını optimize eder. GPIO 26 üzerinden dijital sinyal gönderir.',
+                specs: {
+                    'Tip': 'Light Dependent Resistor',
+                    'Bağlantı': 'GPIO 26 (Dijital)',
+                    'Fonksiyon': 'Gündüz/Gece Tespiti',
+                    'Kullanım': 'Optimal sulama saati belirleme',
+                    'ML Girdisi': 'Saat bilgisi (0-23)'
+                }
             },
             'water-system': {
-                title: 'Otomatik Sulama',
-                desc: 'ML kontrollü akıllı sulama. 15 günde %40 su tasarrufu.',
-                specs: { 'Debi': '80-120 L/h', 'Doğruluk': '%83.3', 'Tasarruf': '%40' }
+                title: '💦 Su Pompası ve Röle Sistemi',
+                desc: 'ML modelinin kararı doğrultusunda otomatik sulama yapan sistem. 5V röle modülü ile güvenli şekilde kontrol edilir.',
+                specs: {
+                    'Pompa Voltajı': '5V DC',
+                    'Pompa Akımı': '2A',
+                    'Debi': '120-150 L/saat',
+                    'Röle Tipi': 'Low Level Trigger',
+                    'Kontrol': 'GPIO 27',
+                    'Test Sulama': '18 kez (15 günde)',
+                    'ML Sulama': '12 kez (%83.3 doğru zamanlama)',
+                    'Su Tasarrufu': '%40 (2.16L toplam)'
+                }
+            },
+            'plants': {
+                title: '🌱 Test Bitkisi: Roka (Eruca sativa)',
+                desc: '15 günlük test sürecinde 4 adet roka fidesi yetiştirilerek sistem performansı izlenmiştir. Optimal nem kontrolü sayesinde sağlıklı gelişim sağlanmıştır.',
+                specs: {
+                    'Test Süresi': '15 gün (360 saat)',
+                    'Başlangıç Boyu': '3.2 cm',
+                    'Final Boyu': '14.3 cm',
+                    'Büyüme Oranı': '%347 artış',
+                    'Yaprak Sayısı': '2-3 → 10-12 yaprak',
+                    'Gövde Kalınlığı': '2mm → 6mm',
+                    'Su Kullanımı': '2.16 litre (15 gün)',
+                    'Gelişim Durumu': 'Sağlıklı - Koyu yeşil yapraklar'
+                }
+            },
+            'ml-system': {
+                title: '🧠 Makine Öğrenmesi Sistemi',
+                desc: 'Scikit-learn Linear Regression ile çalışan, sürekli kendini güncelleyen yapay zeka modeli. İnternet gerektirmeden Raspberry Pi üzerinde eğitim ve tahmin yapar.',
+                specs: {
+                    'Algoritma': 'Linear Regression (Doğrusal Regresyon)',
+                    'Kütüphane': 'Scikit-learn 1.3+',
+                    'Eğitim Yeri': 'Raspberry Pi 5 (Yerel - Bulut YOK)',
+                    'Girdi Parametreleri': '5 (Nem, Sıcaklık, Hava Nemi, Saat, Pompa)',
+                    'İlk Model (7.gün)': 'R² = 0.823 (%82.3 doğruluk)',
+                    '2. Model (14.gün)': 'R² = 0.847 (%84.7 doğruluk)',
+                    'İyileşme': '+%2.4 (Sürekli öğreniyor!)',
+                    'Güncelleme': 'Her 7 günde otomatik',
+                    'Offline Çalışma': 'Evet - İnternet gerektirmez'
+                }
+            },
+            'websocket': {
+                title: '📡 WebSocket - Gerçek Zamanlı İletişim',
+                desc: 'Flask-SocketIO kullanarak çift yönlü, gerçek zamanlı veri iletimi sağlar. Progressive Web App (PWA) ile platform bağımsız arayüz sunar.',
+                specs: {
+                    'Protokol': 'WebSocket (Flask-SocketIO)',
+                    'Gecikme': '< 100ms',
+                    'Aktif Süre (Test)': '358.2 saat / 360 saat',
+                    'Bağlantı Kopması': '2 kez (Elektrik kesintisi)',
+                    'Veri Paketi': '1,296,000 paket',
+                    'Paket Kaybı': '%0.02',
+                    'PWA': 'Platform bağımsız - Uygulama mağazası gerektirmez',
+                    'Bildirim': 'Ntfy.sh push notification'
+                }
+            },
+            'data-layer': {
+                title: '💾 Veri İşleme ve Depolama Katmanı',
+                desc: 'Sensör verilerini güvenli şekilde işler ve saklar. Thread-safe yapı ile veri kaybını önler.',
+                specs: {
+                    'Depolama': 'CSV formatı (Her 5 dakika)',
+                    'Yapılandırma': 'JSON',
+                    'Güvenlik': 'Atomic File Write + RLock()',
+                    'Bellek': 'Son 60 saniye (Optimize)',
+                    'Toplam Kayıt (15 gün)': '4,320 kayıt',
+                    'Başarılı Kayıt': '4,318 (%99.8)',
+                    'Kayıp Veri': '2 (Elektrik kesintisi)',
+                    'Yazılım Hatası': '0 - Sıfır hata!'
+                }
+            },
+            'architecture': {
+                title: '🏗️ 3 Katmanlı Sistem Mimarisi',
+                desc: 'SmartGreenify, modüler ve ölçeklenebilir 3 katmanlı mimari ile tasarlanmıştır. Her katman bağımsız çalışabilir ve test edilebilir.',
+                specs: {
+                    'KATMAN 1': 'Sensör Katmanı (Veri Toplama)',
+                    '├─ BME280': 'Sıcaklık, Nem, Basınç (SPI)',
+                    '├─ ADS1115': '16-bit ADC (I²C)',
+                    '├─ Toprak Sensörü': 'Kapasitif nem ölçümü',
+                    '└─ LDR': 'Işık algılama (GPIO)',
+                    'KATMAN 2': 'Veri İşleme ve Depolama',
+                    '├─ Normalizasyon': 'Veri temizleme',
+                    '├─ CSV/JSON': 'Kalıcı depolama',
+                    '└─ WebSocket': 'Gerçek zamanlı iletim',
+                    'KATMAN 3': 'Yapay Zeka ve Karar',
+                    '├─ ML Pipeline': 'Veri hazırlama ve eğitim',
+                    '├─ Tahmin': 'Toprak nemi değişim tahmini',
+                    '├─ Optimizasyon': '24 saat simülasyon',
+                    '└─ Güncelleme': 'Her 7 günde yeniden eğitim'
+                }
             }
         };
 
         function init() {
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xEAE8DD);
-            scene.fog = new THREE.Fog(0xf5f3eb, 15, 50);
+            scene.fog = new THREE.Fog(0xEAE8DD, 10, 25);
 
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(6, 5, 6);
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(8, 6, 8);
+            camera.lookAt(0, 1.5, 0);
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-            const light = new THREE.DirectionalLight(0xffffff, 1.8);
-            light.position.set(8, 12, 8);
-            light.castShadow = true;
-            scene.add(light);
-            scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-            
-            const greenLight = new THREE.PointLight(0x22c55e, 1.5, 20);
-            greenLight.position.set(0, 4, 0);
-            scene.add(greenLight);
+            // Enhanced lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
 
-            const fillLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            mainLight.position.set(5, 10, 5);
+            mainLight.castShadow = true;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
+            scene.add(mainLight);
+
+            const fillLight = new THREE.DirectionalLight(0x4ade80, 0.3);
             fillLight.position.set(-5, 5, -5);
             scene.add(fillLight);
 
-            createGreenhouse();
-            
-            const ground = new THREE.Mesh(
-                new THREE.CircleGeometry(15, 64),
-                new THREE.MeshStandardMaterial({ color: 0xdad8cb })
-            );
-            ground.rotation.x = -Math.PI / 2;
-            scene.add(ground);
+            const greenGlow = new THREE.PointLight(0x22c55e, 0.5, 15);
+            greenGlow.position.set(0, 3, 0);
+            scene.add(greenGlow);
 
+            createGreenhouse();
             setupControls();
             animate();
             window.addEventListener('resize', onResize);
@@ -380,160 +557,96 @@
         function createGreenhouse() {
             greenhouse = new THREE.Group();
 
-            // Base
-            const base = new THREE.Mesh(
-                new THREE.BoxGeometry(5, 0.15, 5),
-                new THREE.MeshStandardMaterial({ color: 0x8b7355 })
-            );
-            base.position.y = 0.075;
-            base.castShadow = true;
-            greenhouse.add(base);
+            // Ground with grid
+            const groundGeo = new THREE.PlaneGeometry(20, 20);
+            const groundMat = new THREE.MeshStandardMaterial({ 
+                color: 0xd1cfc5,
+                roughness: 0.8
+            });
+            const ground = new THREE.Mesh(groundGeo, groundMat);
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            greenhouse.add(ground);
 
-            // Frame posts
-            const frameMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.8 });
-            [[2.46,1.5,2.46],[2.46,1.5,-2.46],[-2.46,1.5,2.46],[-2.46,1.5,-2.46]].forEach(p => {
-                const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, 3, 0.08), frameMat);
-                post.position.set(...p);
-                post.castShadow = true;
-                greenhouse.add(post);
+            // Grid
+            const gridHelper = new THREE.GridHelper(20, 20, 0x22c55e, 0xa8a695);
+            gridHelper.material.opacity = 0.3;
+            gridHelper.material.transparent = true;
+            greenhouse.add(gridHelper);
+
+            // Main greenhouse structure - larger and more impressive
+            const frameGeo = new THREE.BoxGeometry(0.08, 5, 0.08);
+            const frameMat = new THREE.MeshStandardMaterial({ 
+                color: 0x94a3b8,
+                metalness: 0.8,
+                roughness: 0.2
             });
 
-            // Walls - more visible transparent polycarbonate
-            const wallMat = new THREE.MeshPhysicalMaterial({
-                color: 0xd4e8f0,
+            // Vertical pillars
+            const pillars = [
+                [-2.5, 2.5, -2.5], [2.5, 2.5, -2.5],
+                [2.5, 2.5, 2.5], [-2.5, 2.5, 2.5]
+            ];
+            pillars.forEach(pos => {
+                const pillar = new THREE.Mesh(frameGeo, frameMat);
+                pillar.position.set(...pos);
+                pillar.castShadow = true;
+                greenhouse.add(pillar);
+            });
+
+            // Roof
+            const roofGeo = new THREE.BoxGeometry(5.5, 0.05, 5.5);
+            const roofMat = new THREE.MeshStandardMaterial({ 
+                color: 0x22c55e,
                 transparent: true,
-                opacity: 0.5,
-                roughness: 0.1,
-                metalness: 0.05,
-                clearcoat: 0.7,
-                clearcoatRoughness: 0.1,
-                side: THREE.DoubleSide
+                opacity: 0.3,
+                metalness: 0.5
             });
-            
-            const wall1 = new THREE.Mesh(new THREE.PlaneGeometry(4.92, 2.85), wallMat);
-            wall1.position.set(0, 1.575, -2.5);
-            wall1.castShadow = true;
-            wall1.receiveShadow = true;
-            greenhouse.add(wall1);
-
-            const wall2 = wall1.clone();
-            wall2.position.z = 2.5;
-            wall2.rotation.y = Math.PI;
-            wall2.castShadow = true;
-            wall2.receiveShadow = true;
-            greenhouse.add(wall2);
-
-            [[-2.5, Math.PI/2], [2.5, -Math.PI/2]].forEach(([x, r]) => {
-                const w = new THREE.Mesh(new THREE.PlaneGeometry(4.92, 2.85), wallMat);
-                w.position.set(x, 1.575, 0);
-                w.rotation.y = r;
-                w.castShadow = true;
-                w.receiveShadow = true;
-                greenhouse.add(w);
-            });
-
-            // Add vertical ribs to show polycarbonate sheet structure
-            const ribMat = new THREE.LineBasicMaterial({ 
-                color: 0xb8c9d4, 
-                linewidth: 2,
-                transparent: true,
-                opacity: 0.6
-            });
-            
-            // Vertical ribs on all walls
-            for (let i = -2.3; i <= 2.3; i += 0.15) {
-                // Front wall ribs
-                const ribPoints1 = [
-                    new THREE.Vector3(i, 0.15, -2.5),
-                    new THREE.Vector3(i, 3, -2.5)
-                ];
-                const ribGeom1 = new THREE.BufferGeometry().setFromPoints(ribPoints1);
-                greenhouse.add(new THREE.Line(ribGeom1, ribMat));
-                
-                // Back wall ribs
-                const ribPoints2 = [
-                    new THREE.Vector3(i, 0.15, 2.5),
-                    new THREE.Vector3(i, 3, 2.5)
-                ];
-                const ribGeom2 = new THREE.BufferGeometry().setFromPoints(ribPoints2);
-                greenhouse.add(new THREE.Line(ribGeom2, ribMat));
-                
-                // Left wall ribs
-                const ribPoints3 = [
-                    new THREE.Vector3(-2.5, 0.15, i),
-                    new THREE.Vector3(-2.5, 3, i)
-                ];
-                const ribGeom3 = new THREE.BufferGeometry().setFromPoints(ribPoints3);
-                greenhouse.add(new THREE.Line(ribGeom3, ribMat));
-                
-                // Right wall ribs
-                const ribPoints4 = [
-                    new THREE.Vector3(2.5, 0.15, i),
-                    new THREE.Vector3(2.5, 3, i)
-                ];
-                const ribGeom4 = new THREE.BufferGeometry().setFromPoints(ribPoints4);
-                greenhouse.add(new THREE.Line(ribGeom4, ribMat));
-            }
-
-            // Roof - transparent polycarbonate with ribs
-            const roofMat = new THREE.MeshPhysicalMaterial({
-                color: 0xd4e8f0,
-                transparent: true,
-                opacity: 0.5,
-                roughness: 0.1,
-                metalness: 0.05,
-                clearcoat: 0.7,
-                side: THREE.DoubleSide
-            });
-            const roof = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), roofMat);
-            roof.position.y = 3;
-            roof.rotation.x = -Math.PI / 2;
-            roof.receiveShadow = true;
+            const roof = new THREE.Mesh(roofGeo, roofMat);
+            roof.position.y = 5;
             greenhouse.add(roof);
 
-            // Roof ribs
-            for (let i = -2.4; i <= 2.4; i += 0.15) {
-                const roofRibPoints1 = [
-                    new THREE.Vector3(i, 3, -2.5),
-                    new THREE.Vector3(i, 3, 2.5)
-                ];
-                const roofRibGeom1 = new THREE.BufferGeometry().setFromPoints(roofRibPoints1);
-                greenhouse.add(new THREE.Line(roofRibGeom1, ribMat));
-            }
-
-            // Transparent plastic container (like in photo)
-            const containerMat = new THREE.MeshPhysicalMaterial({
-                color: 0xadd8e6,
+            // Glass walls
+            const glassGeo = new THREE.PlaneGeometry(5, 4.8);
+            const glassMat = new THREE.MeshStandardMaterial({
+                color: 0x4ade80,
                 transparent: true,
-                opacity: 0.25,
-                roughness: 0.2,
-                metalness: 0.1,
-                clearcoat: 0.3,
+                opacity: 0.15,
                 side: THREE.DoubleSide
             });
-            
-            // Container walls
-            const containerHeight = 0.35;
+
+            const walls = [
+                { pos: [0, 2.5, -2.5], rot: [0, 0, 0] },
+                { pos: [0, 2.5, 2.5], rot: [0, Math.PI, 0] },
+                { pos: [-2.5, 2.5, 0], rot: [0, Math.PI/2, 0] },
+                { pos: [2.5, 2.5, 0], rot: [0, -Math.PI/2, 0] }
+            ];
+
+            walls.forEach(w => {
+                const wall = new THREE.Mesh(glassGeo, glassMat);
+                wall.position.set(...w.pos);
+                wall.rotation.set(...w.rot);
+                greenhouse.add(wall);
+            });
+
+            // Container - more realistic
             const containerSize = 4.4;
-            
-            // Bottom
-            const bottom = new THREE.Mesh(
-                new THREE.PlaneGeometry(containerSize, containerSize),
-                containerMat
-            );
-            bottom.rotation.x = -Math.PI / 2;
-            bottom.position.y = 0.175;
-            greenhouse.add(bottom);
-            
-            // Front wall
+            const containerHeight = 0.7;
+            const containerMat = new THREE.MeshStandardMaterial({ 
+                color: 0x88b8cc,
+                transparent: true,
+                opacity: 0.4,
+                side: THREE.DoubleSide
+            });
+
+            // Container walls
             const cFront = new THREE.Mesh(
                 new THREE.PlaneGeometry(containerSize, containerHeight),
                 containerMat
             );
             cFront.position.set(0, 0.35, containerSize/2);
             greenhouse.add(cFront);
-            
-            // Back wall
+
             const cBack = new THREE.Mesh(
                 new THREE.PlaneGeometry(containerSize, containerHeight),
                 containerMat
@@ -541,8 +654,7 @@
             cBack.position.set(0, 0.35, -containerSize/2);
             cBack.rotation.y = Math.PI;
             greenhouse.add(cBack);
-            
-            // Left wall
+
             const cLeft = new THREE.Mesh(
                 new THREE.PlaneGeometry(containerSize, containerHeight),
                 containerMat
@@ -550,8 +662,7 @@
             cLeft.position.set(-containerSize/2, 0.35, 0);
             cLeft.rotation.y = Math.PI / 2;
             greenhouse.add(cLeft);
-            
-            // Right wall
+
             const cRight = new THREE.Mesh(
                 new THREE.PlaneGeometry(containerSize, containerHeight),
                 containerMat
@@ -560,32 +671,6 @@
             cRight.rotation.y = -Math.PI / 2;
             greenhouse.add(cRight);
 
-            // Container edges for better visibility
-            const edgeMat = new THREE.LineBasicMaterial({ color: 0x88b8cc, linewidth: 2 });
-            const containerEdges = [
-                // Bottom edges
-                [[-2.2, 0.175, -2.2], [2.2, 0.175, -2.2]],
-                [[2.2, 0.175, -2.2], [2.2, 0.175, 2.2]],
-                [[2.2, 0.175, 2.2], [-2.2, 0.175, 2.2]],
-                [[-2.2, 0.175, 2.2], [-2.2, 0.175, -2.2]],
-                // Top edges
-                [[-2.2, 0.525, -2.2], [2.2, 0.525, -2.2]],
-                [[2.2, 0.525, -2.2], [2.2, 0.525, 2.2]],
-                [[2.2, 0.525, 2.2], [-2.2, 0.525, 2.2]],
-                [[-2.2, 0.525, 2.2], [-2.2, 0.525, -2.2]],
-                // Vertical edges
-                [[-2.2, 0.175, -2.2], [-2.2, 0.525, -2.2]],
-                [[2.2, 0.175, -2.2], [2.2, 0.525, -2.2]],
-                [[2.2, 0.175, 2.2], [2.2, 0.525, 2.2]],
-                [[-2.2, 0.175, 2.2], [-2.2, 0.525, 2.2]]
-            ];
-            
-            containerEdges.forEach(([start, end]) => {
-                const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
-                const lineGeom = new THREE.BufferGeometry().setFromPoints(points);
-                greenhouse.add(new THREE.Line(lineGeom, edgeMat));
-            });
-
             // Soil
             const soil = new THREE.Mesh(
                 new THREE.BoxGeometry(4.4, 0.35, 4.4),
@@ -593,92 +678,289 @@
             );
             soil.position.y = 0.325;
             soil.userData.componentId = 'plants';
+            soil.castShadow = true;
             greenhouse.add(soil);
 
-            // Dense plants - more realistic coverage
-            for (let x = -2; x <= 2; x += 0.2) {
-                for (let z = -2; z <= 2; z += 0.2) {
-                    if (Math.random() > 0.1) { // 90% density for fuller look
+            // Plants - Arugula (Roka)
+            for (let x = -2; x <= 2; x += 0.25) {
+                for (let z = -2; z <= 2; z += 0.25) {
+                    if (Math.random() > 0.15) {
                         const plant = new THREE.Group();
                         const stem = new THREE.Mesh(
-                            new THREE.CylinderGeometry(0.008, 0.012, 0.12, 6),
+                            new THREE.CylinderGeometry(0.01, 0.015, 0.15, 6),
                             new THREE.MeshStandardMaterial({ color: 0x2d5016 })
                         );
-                        stem.position.y = 0.06;
+                        stem.position.y = 0.075;
+                        stem.castShadow = true;
                         plant.add(stem);
 
-                        // More leaves for fuller appearance
-                        const numLeaves = 4 + Math.floor(Math.random() * 2);
+                        const numLeaves = 5 + Math.floor(Math.random() * 3);
                         for (let i = 0; i < numLeaves; i++) {
                             const leaf = new THREE.Mesh(
-                                new THREE.CircleGeometry(0.06, 10),
-                                new THREE.MeshStandardMaterial({ color: 0x3fb553, side: THREE.DoubleSide })
+                                new THREE.CircleGeometry(0.08, 12),
+                                new THREE.MeshStandardMaterial({ 
+                                    color: 0x3fb553,
+                                    side: THREE.DoubleSide 
+                                })
                             );
-                            const a = (i / numLeaves) * Math.PI * 2;
-                            leaf.position.set(Math.cos(a)*0.04, 0.1+i*0.015, Math.sin(a)*0.04);
-                            leaf.rotation.x = Math.PI/2 + (Math.random()-0.5)*0.2;
+                            const angle = (i / numLeaves) * Math.PI * 2;
+                            leaf.position.set(
+                                Math.cos(angle) * 0.05,
+                                0.12 + i * 0.02,
+                                Math.sin(angle) * 0.05
+                            );
+                            leaf.rotation.x = Math.PI/2 + (Math.random()-0.5)*0.3;
+                            leaf.castShadow = true;
                             plant.add(leaf);
                         }
-                        plant.position.set(x+(Math.random()-0.5)*0.12, 0.5, z+(Math.random()-0.5)*0.12);
-                        plant.scale.set(0.9 + Math.random()*0.3, 0.9 + Math.random()*0.3, 0.9 + Math.random()*0.3);
+                        plant.position.set(
+                            x + (Math.random()-0.5)*0.15,
+                            0.5,
+                            z + (Math.random()-0.5)*0.15
+                        );
+                        plant.scale.set(
+                            0.8 + Math.random()*0.4,
+                            0.8 + Math.random()*0.4,
+                            0.8 + Math.random()*0.4
+                        );
                         plant.userData.componentId = 'plants';
                         greenhouse.add(plant);
                     }
                 }
             }
 
-            // Orange Raspberry Pi
+            // Raspberry Pi 5 - More detailed
             const rpi = new THREE.Group();
-            const rpiCase = new THREE.Mesh(
-                new THREE.BoxGeometry(0.85, 0.35, 0.6),
-                new THREE.MeshStandardMaterial({ color: 0xff6600 })
+            
+            // Main board
+            const rpiBoard = new THREE.Mesh(
+                new THREE.BoxGeometry(0.85, 0.05, 0.6),
+                new THREE.MeshStandardMaterial({ 
+                    color: 0x16a34a,
+                    roughness: 0.3,
+                    metalness: 0.7
+                })
             );
-            rpiCase.userData.componentId = 'raspberry-pi';
+            rpiBoard.castShadow = true;
+            rpi.add(rpiBoard);
+
+            // Orange case
+            const rpiCase = new THREE.Mesh(
+                new THREE.BoxGeometry(0.9, 0.4, 0.65),
+                new THREE.MeshStandardMaterial({ 
+                    color: 0xff6600,
+                    transparent: true,
+                    opacity: 0.7
+                })
+            );
+            rpiCase.position.y = -0.15;
             rpi.add(rpiCase);
 
-            const top = new THREE.Mesh(
-                new THREE.BoxGeometry(0.85, 0.05, 0.6),
-                new THREE.MeshStandardMaterial({ color: 0xf0f0f0 })
+            // CPU chip
+            const cpu = new THREE.Mesh(
+                new THREE.BoxGeometry(0.15, 0.03, 0.15),
+                new THREE.MeshStandardMaterial({ color: 0x2d3748 })
             );
-            top.position.y = 0.2;
-            rpi.add(top);
+            cpu.position.set(0, 0.04, 0);
+            rpi.add(cpu);
 
+            // GPIO pins
+            for (let i = 0; i < 40; i++) {
+                const pin = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.01, 0.01, 0.05, 8),
+                    new THREE.MeshStandardMaterial({ 
+                        color: i % 2 === 0 ? 0xffd700 : 0xc0c0c0,
+                        metalness: 0.9
+                    })
+                );
+                pin.position.set(
+                    -0.35 + (i % 2) * 0.025,
+                    0.05,
+                    -0.24 + Math.floor(i / 2) * 0.025
+                );
+                rpi.add(pin);
+            }
+
+            // Power LED
             const led = new THREE.Mesh(
-                new THREE.SphereGeometry(0.02),
+                new THREE.SphereGeometry(0.025),
                 new THREE.MeshBasicMaterial({ color: 0x00ff00 })
             );
             led.position.set(0.35, 0.05, 0.25);
             rpi.add(led);
 
-            rpi.position.set(0, 3.3, 0);
+            // USB ports
+            for (let i = 0; i < 4; i++) {
+                const usb = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.08, 0.04, 0.12),
+                    new THREE.MeshStandardMaterial({ color: 0x1e40af })
+                );
+                usb.position.set(0.45, -0.05 + Math.floor(i/2)*0.05, -0.15 + (i%2)*0.15);
+                rpi.add(usb);
+            }
+
+            rpi.position.set(0, 3.5, 0);
             rpi.userData.componentId = 'raspberry-pi';
             greenhouse.add(rpi);
 
-            // Water pump with better visibility
-            const pump = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.15, 0.15, 0.35, 16),
+            // Data flow visualization
+            for (let i = 0; i < 5; i++) {
+                const dataFlow = document.createElement('div');
+                dataFlow.className = 'data-flow';
+                dataFlow.style.left = `${50 + (Math.random()-0.5)*30}%`;
+                dataFlow.style.top = `${20}%`;
+                dataFlow.style.animationDelay = `${i * 0.4}s`;
+                document.getElementById('canvas-container').appendChild(dataFlow);
+            }
+
+            // BME280 Sensor
+            const bme280 = new THREE.Group();
+            const bmeBoard = new THREE.Mesh(
+                new THREE.BoxGeometry(0.25, 0.02, 0.25),
+                new THREE.MeshStandardMaterial({ color: 0x7c3aed })
+            );
+            bmeBoard.castShadow = true;
+            bme280.add(bmeBoard);
+
+            const bmeSensor = new THREE.Mesh(
+                new THREE.BoxGeometry(0.08, 0.04, 0.08),
+                new THREE.MeshStandardMaterial({ color: 0xc0c0c0, metalness: 0.8 })
+            );
+            bmeSensor.position.y = 0.03;
+            bme280.add(bmeSensor);
+
+            bme280.position.set(-1.8, 3.2, 1.8);
+            bme280.userData.componentId = 'bme280';
+            greenhouse.add(bme280);
+
+            // Soil Moisture Sensor
+            const soilSensor = new THREE.Group();
+            const sensorProbe = new THREE.Mesh(
+                new THREE.BoxGeometry(0.05, 0.6, 0.15),
+                new THREE.MeshStandardMaterial({ color: 0xeab308 })
+            );
+            sensorProbe.position.y = 0.3;
+            sensorProbe.castShadow = true;
+            soilSensor.add(sensorProbe);
+
+            const sensorBoard = new THREE.Mesh(
+                new THREE.BoxGeometry(0.2, 0.02, 0.2),
+                new THREE.MeshStandardMaterial({ color: 0x16a34a })
+            );
+            sensorBoard.position.y = 0.62;
+            soilSensor.add(sensorBoard);
+
+            soilSensor.position.set(1.5, 0.2, -1.5);
+            soilSensor.userData.componentId = 'soil-sensor';
+            greenhouse.add(soilSensor);
+
+            // LDR Light Sensor
+            const ldr = new THREE.Group();
+            const ldrBody = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.08, 0.08, 0.15, 16),
+                new THREE.MeshStandardMaterial({ color: 0xfbbf24 })
+            );
+            ldr.add(ldrBody);
+
+            const ldrTop = new THREE.Mesh(
+                new THREE.CircleGeometry(0.08, 16),
+                new THREE.MeshStandardMaterial({ color: 0x78350f })
+            );
+            ldrTop.position.y = 0.075;
+            ldrTop.rotation.x = -Math.PI/2;
+            ldr.add(ldrTop);
+
+            ldr.position.set(-1.8, 3.8, -1.8);
+            ldr.userData.componentId = 'ldr';
+            greenhouse.add(ldr);
+
+            // Water Pump - More detailed
+            const pump = new THREE.Group();
+            const pumpBody = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.2, 0.2, 0.45, 16),
                 new THREE.MeshStandardMaterial({ 
                     color: 0x2563eb,
-                    roughness: 0.4,
-                    metalness: 0.6
+                    roughness: 0.3,
+                    metalness: 0.7
                 })
             );
-            pump.position.set(2.2, 0.4, -2.2);
-            pump.castShadow = true;
+            pumpBody.castShadow = true;
+            pump.add(pumpBody);
+
+            const pumpTop = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.15, 0.15, 0.1, 16),
+                new THREE.MeshStandardMaterial({ color: 0x1e40af })
+            );
+            pumpTop.position.y = 0.275;
+            pump.add(pumpTop);
+
+            // Outlet pipe
+            const outlet = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.04, 0.04, 0.6, 12),
+                new THREE.MeshStandardMaterial({ 
+                    color: 0xfbbf24,
+                    metalness: 0.8
+                })
+            );
+            outlet.rotation.z = Math.PI / 2;
+            outlet.position.set(0.3, 0.2, 0);
+            pump.add(outlet);
+
+            // Water drops animation
+            for (let i = 0; i < 3; i++) {
+                const drop = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.03),
+                    new THREE.MeshStandardMaterial({ 
+                        color: 0x3b82f6,
+                        transparent: true,
+                        opacity: 0.7
+                    })
+                );
+                drop.position.set(0.6, 0.2 - i*0.15, 0);
+                pump.add(drop);
+            }
+
+            pump.position.set(2.3, 0.45, -2.3);
             pump.userData.componentId = 'water-system';
             greenhouse.add(pump);
 
-            // Output pipe
-            const pipeGeom = new THREE.CylinderGeometry(0.04, 0.04, 0.5, 12);
-            const pipeMat = new THREE.MeshStandardMaterial({ 
-                color: 0xffdd00,
-                roughness: 0.3,
-                metalness: 0.5
+            // Relay Module
+            const relay = new THREE.Group();
+            const relayBoard = new THREE.Mesh(
+                new THREE.BoxGeometry(0.3, 0.02, 0.4),
+                new THREE.MeshStandardMaterial({ color: 0x16a34a })
+            );
+            relay.add(relayBoard);
+
+            const relayModule = new THREE.Mesh(
+                new THREE.BoxGeometry(0.15, 0.08, 0.2),
+                new THREE.MeshStandardMaterial({ color: 0x1e40af })
+            );
+            relayModule.position.y = 0.05;
+            relay.add(relayModule);
+
+            relay.position.set(1.8, 3.3, 0);
+            relay.userData.componentId = 'water-system';
+            greenhouse.add(relay);
+
+            // Connection wires
+            const wireMat = new THREE.LineBasicMaterial({ color: 0xef4444, linewidth: 2 });
+            const connections = [
+                [[0, 3.5, 0], [1.8, 3.3, 0]],  // RPi to Relay
+                [[1.8, 3.3, 0], [2.3, 0.45, -2.3]], // Relay to Pump
+                [[0, 3.5, 0], [-1.8, 3.2, 1.8]], // RPi to BME280
+                [[0, 3.5, 0], [1.5, 0.82, -1.5]]  // RPi to Soil Sensor
+            ];
+
+            connections.forEach(([start, end]) => {
+                const points = [
+                    new THREE.Vector3(...start),
+                    new THREE.Vector3(...end)
+                ];
+                const wireGeom = new THREE.BufferGeometry().setFromPoints(points);
+                const wire = new THREE.Line(wireGeom, wireMat);
+                greenhouse.add(wire);
             });
-            const pipe = new THREE.Mesh(pipeGeom, pipeMat);
-            pipe.rotation.z = Math.PI / 2;
-            pipe.position.set(2.4, 0.5, -2.2);
-            greenhouse.add(pipe);
 
             scene.add(greenhouse);
         }
@@ -725,7 +1007,7 @@
             const specs = document.getElementById('comp-specs');
             specs.innerHTML = '';
             Object.entries(info.specs).forEach(([k, v]) => {
-                specs.innerHTML += `<div class="spec-item"><span style="color:#4a5568;font-weight:600">${k}:</span><span style="color:#16a34a;font-weight:bold">${v}</span></div>`;
+                specs.innerHTML += `<div class="spec-item"><span style="color:#4a5568;font-weight:600">${k}:</span><span style="color:#16a34a;font-weight:bold;margin-left:10px">${v}</span></div>`;
             });
             document.getElementById('component-info').classList.add('active');
         }
@@ -749,11 +1031,24 @@
                 document.querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 const v = btn.dataset.view;
-                if (v === 'default') camera.position.set(6, 5, 6);
-                else if (v === 'top') camera.position.set(0, 10, 0);
-                else if (v === 'inside') camera.position.set(0, 1.5, 0);
-                else if (v === 'system') showComponentInfo('raspberry-pi');
-                camera.lookAt(0, 1.5, 0);
+                if (v === 'default') {
+                    camera.position.set(8, 6, 8);
+                    camera.lookAt(0, 1.5, 0);
+                }
+                else if (v === 'top') {
+                    camera.position.set(0, 12, 0);
+                    camera.lookAt(0, 0, 0);
+                }
+                else if (v === 'inside') {
+                    camera.position.set(0, 2, 0);
+                    camera.lookAt(0, 2, -2);
+                }
+                else if (v === 'system') {
+                    showComponentInfo('raspberry-pi');
+                }
+                else if (v === 'architecture') {
+                    showComponentInfo('architecture');
+                }
             });
         });
 
