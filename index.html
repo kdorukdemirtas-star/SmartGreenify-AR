@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" style="height: 100%; overflow: hidden;">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>SmartGreenify - IoT Sensör Ağı ve ML Tabanlı Akıllı Sera Sistemi</title>
     <style>
         * {
@@ -18,19 +19,23 @@
             background: linear-gradient(135deg, #EAE8DD, #f5f3eb, #ffffff);
             overflow: hidden;
             height: 100vh;
-            touch-action: none;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
+            margin: 0;
+            padding: 0;
+            position: fixed;
+            width: 100%;
         }
 
         #container {
             width: 100%;
             height: 100vh;
-            position: relative;
+            height: -webkit-fill-available;
+            position: fixed;
+            top: 0;
+            left: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
 
         #welcome-screen {
@@ -159,6 +164,8 @@
             width: 100%;
             height: 100%;
             position: relative;
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch;
         }
 
         #controls {
@@ -311,6 +318,11 @@
 
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {
+            body {
+                position: fixed;
+                overflow: hidden;
+            }
+
             .logo {
                 font-size: 2.5em;
             }
@@ -328,10 +340,12 @@
             .project-stats {
                 flex-direction: column;
                 gap: 15px;
+                width: 90%;
             }
 
             .stat-box {
                 padding: 15px 20px;
+                width: 100%;
             }
 
             .stat-value {
@@ -340,6 +354,7 @@
 
             .instructions {
                 padding: 20px;
+                width: 90%;
             }
 
             .instruction-item {
@@ -350,6 +365,7 @@
                 width: 35px;
                 height: 35px;
                 font-size: 1.1em;
+                min-width: 35px;
             }
 
             #start-btn {
@@ -359,39 +375,51 @@
 
             #controls {
                 bottom: 15px;
-                padding: 15px 20px;
-                gap: 10px;
+                padding: 12px 15px;
+                gap: 8px;
                 flex-wrap: wrap;
-                max-width: 90%;
+                max-width: 95%;
+                justify-content: center;
             }
 
             .control-btn {
-                padding: 10px 18px;
-                font-size: 0.85em;
+                padding: 10px 16px;
+                font-size: 0.8em;
+                white-space: nowrap;
             }
 
             #component-info {
-                max-width: 90%;
-                padding: 25px;
-                max-height: 70vh;
+                max-width: 92%;
+                padding: 25px 20px;
+                max-height: 75vh;
+                font-size: 14px;
             }
 
             .component-title {
-                font-size: 1.5em;
+                font-size: 1.4em;
+                line-height: 1.3;
             }
 
             .component-desc {
-                font-size: 0.95em;
+                font-size: 0.9em;
+                line-height: 1.5;
             }
 
             .spec-item {
                 flex-direction: column;
                 align-items: flex-start;
                 padding: 8px 0;
+                gap: 4px;
             }
 
             .spec-item span {
                 margin-left: 0 !important;
+                display: block;
+            }
+
+            .close-btn {
+                padding: 6px 12px;
+                font-size: 0.9em;
             }
         }
 
@@ -401,15 +429,21 @@
             }
 
             #logo-overlay {
-                font-size: 1.5em;
+                font-size: 1.4em;
+                top: 10px;
             }
 
             .subtitle {
-                font-size: 0.9em;
+                font-size: 0.85em;
+                line-height: 1.4;
             }
 
             .stat-value {
                 font-size: 1.8em;
+            }
+
+            .stat-label {
+                font-size: 0.8em;
             }
 
             #start-btn {
@@ -419,16 +453,72 @@
 
             #controls {
                 bottom: 10px;
-                padding: 10px 15px;
+                padding: 10px 12px;
+                gap: 6px;
             }
 
             .control-btn {
-                padding: 8px 15px;
-                font-size: 0.75em;
+                padding: 8px 12px;
+                font-size: 0.7em;
             }
 
             .component-title {
-                font-size: 1.3em;
+                font-size: 1.2em;
+            }
+
+            .component-desc {
+                font-size: 0.85em;
+            }
+
+            #component-info {
+                max-width: 95%;
+                padding: 20px 15px;
+            }
+        }
+
+        /* Landscape mode for mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .logo {
+                font-size: 1.8em;
+                margin-bottom: 5px;
+            }
+
+            .subtitle {
+                font-size: 0.8em;
+                margin-bottom: 15px;
+            }
+
+            .project-stats {
+                flex-direction: row;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .stat-box {
+                padding: 10px 15px;
+            }
+
+            .stat-value {
+                font-size: 1.5em;
+            }
+
+            .instructions {
+                padding: 15px;
+            }
+
+            #start-btn {
+                padding: 10px 30px;
+                font-size: 0.9em;
+            }
+
+            #controls {
+                bottom: 8px;
+                padding: 8px 12px;
+            }
+
+            .control-btn {
+                padding: 6px 12px;
+                font-size: 0.7em;
             }
         }
     </style>
@@ -658,11 +748,21 @@
             }
             camera.lookAt(0, 1.5, 0);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: true,
+                powerPreference: "high-performance"
+            });
             renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            
+            const canvas = renderer.domElement;
+            canvas.style.touchAction = 'none';
+            canvas.style.display = 'block';
+            
+            document.getElementById('canvas-container').appendChild(canvas);
 
             // Enhanced lighting
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
@@ -1103,7 +1203,10 @@
         function setupControls() {
             let targetRotY = 0;
             let touchStartX = 0;
+            let lastTouchX = 0;
             let isTouching = false;
+            let touchMoved = false;
+            const canvas = renderer.domElement;
 
             // Mouse control
             document.addEventListener('mousemove', e => {
@@ -1113,71 +1216,82 @@
                 }
             });
 
-            // Touch controls for mobile
-            renderer.domElement.addEventListener('touchstart', e => {
+            // Touch controls - başlangıç
+            canvas.addEventListener('touchstart', e => {
                 isTouching = true;
+                touchMoved = false;
                 touchStartX = e.touches[0].clientX;
-                e.preventDefault();
-            }, { passive: false });
+                lastTouchX = touchStartX;
+            }, { passive: true });
 
-            renderer.domElement.addEventListener('touchmove', e => {
-                if (isRotating && isTouching) {
-                    const touchX = e.touches[0].clientX;
-                    const deltaX = touchX - touchStartX;
-                    targetRotY = (deltaX / window.innerWidth) * 2;
-                    window.targetRotY = targetRotY;
-                    touchStartX = touchX;
+            // Touch controls - hareket
+            canvas.addEventListener('touchmove', e => {
+                if (!isRotating || !isTouching) return;
+                
+                touchMoved = true;
+                const touchX = e.touches[0].clientX;
+                const deltaX = touchX - lastTouchX;
+                
+                // Mevcut rotasyona ekle
+                if (greenhouse) {
+                    greenhouse.rotation.y += deltaX * 0.01;
+                    window.targetRotY = greenhouse.rotation.y;
                 }
-                e.preventDefault();
-            }, { passive: false });
+                
+                lastTouchX = touchX;
+            }, { passive: true });
 
-            renderer.domElement.addEventListener('touchend', e => {
+            // Touch controls - bitiş
+            canvas.addEventListener('touchend', e => {
+                // Eğer hareket etmediyse, tıklama sayılır
+                if (!touchMoved && e.changedTouches.length > 0) {
+                    const touch = e.changedTouches[0];
+                    handleTap(touch.clientX, touch.clientY);
+                }
                 isTouching = false;
             });
 
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2();
 
-            // Click handler
-            function handleClick(clientX, clientY) {
+            // Tıklama/dokunma handler
+            function handleTap(clientX, clientY) {
                 mouse.x = (clientX / window.innerWidth) * 2 - 1;
                 mouse.y = -(clientY / window.innerHeight) * 2 + 1;
                 raycaster.setFromCamera(mouse, camera);
                 const hits = raycaster.intersectObjects(scene.children, true);
+                
                 if (hits.length) {
                     let obj = hits[0].object;
-                    while (obj && !obj.userData.componentId) obj = obj.parent;
-                    if (obj?.userData.componentId) showComponentInfo(obj.userData.componentId);
+                    while (obj && !obj.userData.componentId) {
+                        obj = obj.parent;
+                    }
+                    if (obj && obj.userData.componentId) {
+                        showComponentInfo(obj.userData.componentId);
+                    }
                 }
             }
 
-            renderer.domElement.addEventListener('click', e => {
-                handleClick(e.clientX, e.clientY);
-            });
-
-            // Touch tap handler
-            let tapTimeout;
-            renderer.domElement.addEventListener('touchstart', e => {
-                if (e.touches.length === 1) {
-                    clearTimeout(tapTimeout);
-                    tapTimeout = setTimeout(() => {
-                        handleClick(e.touches[0].clientX, e.touches[0].clientY);
-                    }, 200);
+            // Mouse click
+            canvas.addEventListener('click', e => {
+                if (!isTouching) {
+                    handleTap(e.clientX, e.clientY);
                 }
-            });
-
-            renderer.domElement.addEventListener('touchmove', e => {
-                clearTimeout(tapTimeout);
             });
         }
 
         function animate() {
             requestAnimationFrame(animate);
             if (greenhouse && isRotating) {
-                greenhouse.rotation.y += (window.targetRotY - greenhouse.rotation.y) * 0.05;
+                // Mouse için smooth geçiş, touch için direkt kullan
+                if (window.targetRotY !== undefined && !isTouchActive) {
+                    greenhouse.rotation.y += (window.targetRotY - greenhouse.rotation.y) * 0.05;
+                }
             }
             renderer.render(scene, camera);
         }
+
+        let isTouchActive = false;
 
         function showComponentInfo(id) {
             const info = componentData[id];
@@ -1197,12 +1311,17 @@
         }
 
         function onResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            camera.aspect = width / height;
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             
             // Adjust camera distance for mobile
-            if (window.innerWidth <= 768) {
+            if (width <= 768) {
                 camera.position.set(10, 7, 10);
             } else {
                 camera.position.set(8, 6, 8);
